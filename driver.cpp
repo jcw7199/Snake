@@ -77,6 +77,16 @@ int main(int argc, char* args[]) {
 			//win.init("images/map.png", NULL);
 			//cout << "jf\n";
 			//SDL_Delay(2000);
+			vector<int> insy;
+			insy.push_back(0);
+			insy.push_back(1);
+			insy.push_back(2);
+			insy.push_back(3);
+
+			for (int var = 0; var < insy.size(); var++)
+			{
+				cout << insy[var] << endl;
+			}
 			Snake s = Snake(); //"idk", player);
 			cout << "start\n";
 			s.start();

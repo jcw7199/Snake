@@ -7,9 +7,10 @@ class Snake{
 
 private:
 	Game* gameInstance;
-	vector<GameObject*> s;
+	vector<SDL_Rect> s_body;
 	GameObject* background;
 	GameObject* s_head;
+	GameObject* s_tail;
 	GameObject* apple;
 	SDL_Rect app_r;
 	SDL_Rect s_r;
@@ -17,7 +18,7 @@ private:
 	int tailSize;
 	int screenWidth = 500;
 	int screenHeight = 500;
-	int snakeDimensions = 25; //25 by 25
+	int s_dimensions = 25; //25 by 25
 	void addTail();
 	void moveSnake();
 	void respawnApple();
