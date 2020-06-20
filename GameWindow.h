@@ -14,8 +14,9 @@ private:
 	
 	//Game::Direction currentDirection;
 public:
+	SDL_Renderer* currentRen;
 	SDL_Renderer* gameRen;
-
+	
 	static int g_width;
 	static int g_height;
 	int g_x;
@@ -23,7 +24,7 @@ public:
 	const char* gametitle;
 	
 
-	GameWindow(const char* title = " ", int x = SDL_WINDOWPOS_CENTERED, int y = SDL_WINDOWPOS_CENTERED, int w = 640, int h = 640);
+	GameWindow(const char* title = " ", int h = 640, int w = 640, int x = SDL_WINDOWPOS_CENTERED, int y = SDL_WINDOWPOS_CENTERED);
 	bool init(const char* file, SDL_Rect* rect = NULL);
 	bool eventHandler();
 	void addToRenderer(const char* file, SDL_Rect rect = { 0,0,g_width,g_height });

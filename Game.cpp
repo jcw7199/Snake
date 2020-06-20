@@ -66,7 +66,6 @@ bool Game::gameEvents() {
 			{
 			case SDLK_UP:
 				g_player->setDir(Direction::UP);
-				cout << "up\n";
 				break;
 
 			case SDLK_DOWN:
