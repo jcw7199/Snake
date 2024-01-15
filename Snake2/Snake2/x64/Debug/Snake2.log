@@ -1,0 +1,9 @@
+﻿  driver.cpp
+  GameWindow.cpp
+  Snake.cpp
+D:\Documents\school\projects\Snake2\Snake2\Snake2\Snake.cpp(5,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+D:\Documents\school\projects\Snake2\Snake2\Snake2\Snake.cpp(303,17): warning C4834: discarding return value of function with 'nodiscard' attribute
+  Generating Code...
+D:\Documents\school\projects\Snake2\Snake2\Snake2\Snake.cpp(298): warning C4715: 'Snake::gameOver': not all control paths return a value
+D:\Documents\school\projects\Snake2\Snake2\Snake2\GameWindow.cpp(50): warning C4715: 'GameWindow::init': not all control paths return a value
+  Snake2.vcxproj -> D:\Documents\school\projects\Snake2\Snake2\x64\Debug\Snake2.exe
