@@ -3,7 +3,7 @@
 
 GameWindow::GameWindow(const char* title, SDL_Rect rect) {
 	cout << "GameWindow::GameWindow\n";
-	windowRect = &rect;
+	windowRect = rect;
 	gameTitle = title;
 	window = nullptr;
 	backgroundSurface = nullptr;
@@ -30,7 +30,7 @@ bool GameWindow::init() {
 	}
 	else
 	{
-		window = SDL_CreateWindow(gameTitle, windowRect->x, windowRect->y, windowRect->w, windowRect->h, SDL_WINDOW_SHOWN);
+		window = SDL_CreateWindow(gameTitle, windowRect.x, windowRect.y, windowRect.w, windowRect.h, SDL_WINDOW_SHOWN);
 		
 		//Create window
 		if (window == NULL)
@@ -48,20 +48,23 @@ bool GameWindow::init() {
 	
 }
 
-bool GameWindow::loadObject(GameObject object)
+void GameWindow::loadObject(GameObject* object, SDL_Rect* imageCropAndPosition)
 {
 	//Loading success flag
 	bool success = true;
 
 	//Load splash image
-	imageSurface = SDL_LoadBMP(object.getTextureFile());
+	imageSurface = SDL_LoadBMP(object->getTextureFile());
+
 	if (imageSurface == NULL)
 	{
-		printf("Unable to load image %s! SDL Error: %s\n", object.getTextureFile(), SDL_GetError());
+		printf("Unable to load image %s! SDL Error: %s\n", object->getTextureFile(), SDL_GetError());
 		success = false;
-	}	
+	}
 	
-	if (SDL_BlitSurface(imageSurface, object.getRect(), windowSurface, NULL) < 0)
+	
+	//windowRect = SDL_Rect{SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 500, 500 };
+	if (SDL_BlitSurface(imageSurface, imageCropAndPosition, windowSurface, object->getRect()) < 0)
 	{
 		cout << "blit error: " << SDL_GetError() << endl;
 	}
@@ -72,7 +75,6 @@ bool GameWindow::loadObject(GameObject object)
 	}
 
 	cout << "image loaded" << endl;
-	return success;
 }
 
 bool GameWindow::eventHandler() {

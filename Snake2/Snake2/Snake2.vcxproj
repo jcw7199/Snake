@@ -163,6 +163,7 @@
     <Image Include="images\apple\2.png" />
     <Image Include="images\apple\3.png" />
     <Image Include="images\game_over.png" />
+    <Image Include="images\head.bmp" />
     <Image Include="images\head.png" />
     <Image Include="images\map.bmp" />
     <Image Include="images\spacer.png" />

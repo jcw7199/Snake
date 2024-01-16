@@ -19,15 +19,15 @@ public:
 	SDL_Surface* backgroundSurface;
 	SDL_Surface* imageSurface;
 	SDL_Texture* windowTexture;
-	SDL_Rect* windowRect;
+	SDL_Rect windowRect;
 
 	const char* gameTitle;
 	
-	GameWindow(const char* title = " ", SDL_Rect rect = { SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 640});
+	GameWindow(const char* title = " ", SDL_Rect windowSize = { SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 640});
 
 	
 	bool init();
-	bool loadObject(GameObject object);
+	void loadObject(GameObject* object, SDL_Rect* imageCropAndPosition = nullptr);
 	bool eventHandler();
 	void addToRenderer(const char* file, SDL_Rect rect);
 	void present();

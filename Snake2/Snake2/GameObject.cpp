@@ -49,15 +49,8 @@ void GameObject::setRect(SDL_Rect rect) {
 }
 
 SDL_Rect* GameObject::getRect() {
-	//cout << textureFile << " getRect()\n";
-	SDL_Rect empty = { 0, 0, 0, 0 };
-	
-	if (SDL_RectEquals(&objectRect, &empty)) {
-		return &objectRect;
-	}
-	else {
-		return nullptr;
-	}
+	//cout << textureFile << " getRect()\n";	
+	return &objectRect;
 }
 
 void GameObject::destroyObject() {

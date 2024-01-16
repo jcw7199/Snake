@@ -14,7 +14,7 @@ public:
 	GameWindow* gameWindow;
 	vector<GameObject*> gameObjects;
 
-	Game(const char* title, GameObject* player, GameObject* background, SDL_Rect rect = { 640, 640, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED });
+	Game(const char* title, GameObject* player, GameObject* background, SDL_Rect rect = { SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 640, });
 	virtual void start();
 	virtual void quit();
 	virtual bool gameEvents() = 0;

@@ -2,12 +2,12 @@
 
 using namespace std;
 
-Game::Game(const char* title, GameObject *player, GameObject* background, SDL_Rect windowDimensions){
+Game::Game(const char* title, GameObject *player, GameObject* background, SDL_Rect windowSize){
 	cout << "Game::Game()\n";
 	//cout << player.getRect().x << endl;
 	isRunning = true;
 	gameTitle = title;
-	gameWindow = new GameWindow(gameTitle, windowDimensions);
+	gameWindow = new GameWindow(gameTitle, windowSize);
 	gameBackground = background;
 	if (player != nullptr) {
 		cout << "player " << player->getID() << " " << player->getTextureFile();
@@ -34,13 +34,13 @@ void Game::start() {
 void Game::quit(){
 	cout << "Game::quit()\n";
 	isRunning = false;
-	gamePlayer->destroyObject();
+	//gamePlayer->destroyObject();
 	gameWindow->deleteWindow();
 	gameWindow = nullptr;
 	gameTitle = nullptr;
 
 	for (int i = 0; i < gameObjects.size(); i++) {
-			gameObjects[i]->destroyObject();
+			//gameObjects[i]->destroyObject();
 	}
 	gameObjects.empty();
 }

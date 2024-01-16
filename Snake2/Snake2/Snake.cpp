@@ -6,16 +6,21 @@ Snake::Snake() : Game("Snake", snakeHead, map, mapRect)
 	cout << "Snake::Snake()\n";
 	srand(time(NULL));
 	
+	
+	SDL_Surface* mapSurface = SDL_LoadBMP("images/map.bmp");
+	mapRect = SDL_Rect{ 0, 0, mapSurface->w, mapSurface->h };
+	windowRect = SDL_Rect{ SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mapSurface->w, mapSurface->h };
+	
 	int center_x = mapRect.w / 2;
 	int center_y = mapRect.h / 2;
 	lastDirection = Direction::NONE;
 	appleRect = { 0,0,snakeBodyDimensions * 2,snakeBodyDimensions * 2 };
-	snakeRect = { center_x,center_y,snakeBodyDimensions,snakeBodyDimensions };
+	snakeRect = { center_x, center_y, snakeBodyDimensions,snakeBodyDimensions };
 
 	apple = new GameObject(appleRect, "images/apple/1.png", MOVEMENT_TYPE::STATIC, Direction::NONE);
-	snakeHead = new GameObject(snakeRect, "images/head.png", MOVEMENT_TYPE::CONSTANT, Direction::NONE);
+	snakeHead = new GameObject(snakeRect, "images/head.bmp", MOVEMENT_TYPE::CONSTANT, Direction::NONE);
 	snakeTail = new GameObject(snakeRect, "images/tail.png", MOVEMENT_TYPE::CONSTANT, Direction::NONE);
-	map = new GameObject(mapRect, "images/map.png", MOVEMENT_TYPE::STATIC, Direction::NONE);
+	map = new GameObject(mapRect, "images/map.bmp", MOVEMENT_TYPE::STATIC, Direction::NONE);
 
 	gamePlayer = snakeHead;
 	gameTitle = "Snake Game";
@@ -31,17 +36,20 @@ Snake::Snake() : Game("Snake", snakeHead, map, mapRect)
 void Snake::start() {
 	cout << "Snake::start\n";
 	//initialize background
-	SDL_Surface* mapSurface = SDL_LoadBMP("images/map.bmp");
-	SDL_Rect mapRect = SDL_Rect{ SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mapSurface->w, mapSurface->h };
-	GameObject map = GameObject(mapRect, "images/map.bmp");
-
+	
+	//GameObject map = GameObject(mapRect, "images/map.bmp");
+	//
+	//SDL_Surface* temp = SDL_LoadBMP("images/head.bmp");
+	//SDL_Rect tempRect = SDL_Rect{ 250, 250, temp->w, temp->h };
+	//GameObject head = GameObject(tempRect, "images/head.bmp");
 	//initialize game window
-	gameWindow = new GameWindow("Hello World", mapRect);
+	gameWindow = new GameWindow("Hello World", windowRect);
 
 
 	gameWindow->init();
 	gameWindow->loadObject(map);
-
+	gameWindow->loadObject(snakeHead);
+	
 	gameWindow->eventHandler();
 	gameWindow->deleteWindow();
 
@@ -282,12 +290,12 @@ bool Snake::gameOver() {
 	//s_body.push_back(s_head->getRect());
 	respawnApple();
 	gameWindow->present();
-	gameWindow->addToRenderer("images/game_over.png", *gameWindow->windowRect);
+	gameWindow->addToRenderer("images/game_over.png", gameWindow->windowRect);
 	gameWindow->present();
 	bool quit = true;
 	while (quit) {
 		while (SDL_PollEvent(&e) > 0) {
-			gameWindow->addToRenderer("images/game_over.png", *gameWindow->windowRect);
+			gameWindow->addToRenderer("images/game_over.png", gameWindow->windowRect);
 			gameWindow->present();
 
 			if (e.type == SDL_KEYDOWN) {

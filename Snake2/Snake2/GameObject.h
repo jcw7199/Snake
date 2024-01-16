@@ -15,7 +15,7 @@ private:
 	MOVEMENT_TYPE objectMVMT;
 	Direction objectDir;
 	static int total;
-	int ID;
+	int ID = -1;
 	
 public:
 	GameObject(SDL_Rect rect, const char* file,

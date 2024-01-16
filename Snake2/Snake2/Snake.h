@@ -18,6 +18,7 @@ private:
 	SDL_Rect appleRect;
 	SDL_Rect snakeRect;
 	SDL_Rect mapRect;
+	SDL_Rect windowRect;
 	int appleFrame;
 	int tailSize;
 	int screenWidth = 500;

@@ -70,5 +70,8 @@
     <Image Include="images\apple\3.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="images\head.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
