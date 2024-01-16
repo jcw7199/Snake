@@ -13,7 +13,7 @@ class GameWindow
 	
 	//Game::Direction currentDirection;
 public:
-	SDL_Window* gameWindow;
+	SDL_Window* window;
 	SDL_Renderer* windowRen;
 	SDL_Surface* windowSurface;
 	SDL_Surface* backgroundSurface;
@@ -23,7 +23,7 @@ public:
 
 	const char* gameTitle;
 	
-	GameWindow(const char* title = " ", const char* backgroundImage = "", SDL_Rect rect = { SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 640});
+	GameWindow(const char* title = " ", SDL_Rect rect = { SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 640});
 
 	
 	bool init();

@@ -10,10 +10,10 @@ class Snake: public Game{
 private:
 	Game* gameInstance;
 	vector<GameObject*> snakeBody;
-	GameObject* background;
 	GameObject* snakeHead;
 	GameObject* snakeTail;
 	GameObject* apple;
+	GameObject* map;
 	Direction lastDirection;
 	SDL_Rect appleRect;
 	SDL_Rect snakeRect;

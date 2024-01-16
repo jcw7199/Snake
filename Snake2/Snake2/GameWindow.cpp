@@ -1,19 +1,18 @@
 #include "GameWindow.h"
 #include <iostream>
 
-GameWindow::GameWindow(const char* title, const char* backgroundImage, SDL_Rect rect) {
+GameWindow::GameWindow(const char* title, SDL_Rect rect) {
 	cout << "GameWindow::GameWindow\n";
 	windowRect = &rect;
 	gameTitle = title;
-	gameWindow = nullptr;
-
-	//windowRen = SDL_CreateRenderer(gameWindow, -1, SDL_RENDERER_SOFTWARE);
+	window = nullptr;
+	backgroundSurface = nullptr;
+	windowTexture = nullptr;
+	windowRen = nullptr;
 	windowSurface = nullptr;
-
-	imageSurface = nullptr;
-	backgroundSurface = SDL_LoadBMP(backgroundImage);
-	
-	
+	imageSurface = nullptr;	
+		
+	//windowRen = SDL_CreateRenderer(gameWindow, -1, SDL_RENDERER_SOFTWARE);
 	//windowTexture = SDL_CreateTextureFromSurface(windowRen, windowSurface);
 	//SDL_SetRenderDrawColor(windowRen, 0, 0, 200, 255);
 
@@ -31,17 +30,17 @@ bool GameWindow::init() {
 	}
 	else
 	{
-		gameWindow = SDL_CreateWindow(gameTitle, windowRect->x, windowRect->y, backgroundSurface->w, backgroundSurface->h, SDL_WINDOW_SHOWN);
+		window = SDL_CreateWindow(gameTitle, windowRect->x, windowRect->y, windowRect->w, windowRect->h, SDL_WINDOW_SHOWN);
 		
 		//Create window
-		if (gameWindow == NULL)
+		if (window == NULL)
 		{
 			printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
 			success = false;
 		}
 		else
 		{
-			windowSurface = SDL_GetWindowSurface(gameWindow);
+			windowSurface = SDL_GetWindowSurface(window);
 		}
 			
 		return success;
@@ -67,7 +66,7 @@ bool GameWindow::loadObject(GameObject object)
 		cout << "blit error: " << SDL_GetError() << endl;
 	}
 
-	if (SDL_UpdateWindowSurface(gameWindow) < 0)
+	if (SDL_UpdateWindowSurface(window) < 0)
 	{
 		cout << "update error: " << SDL_GetError() << endl;
 	}
@@ -116,13 +115,13 @@ void GameWindow::present() {
 }
 
 GameWindow& GameWindow::operator=(const GameWindow& other) {
-	if(this->gameWindow != other.gameWindow){
-		SDL_DestroyWindow(this->gameWindow);
+	if(this->window != other.window){
+		SDL_DestroyWindow(this->window);
 		SDL_DestroyRenderer(this->windowRen);
-		this->gameWindow = nullptr;
+		this->window = nullptr;
 		this->windowRen = nullptr;
 	}
-	this->gameWindow = other.gameWindow;
+	this->window = other.window;
 	this->windowRen = other.windowRen;
 	this->gameTitle = other.gameTitle;
 	this->windowRect = other.windowRect;
@@ -132,7 +131,7 @@ GameWindow& GameWindow::operator=(const GameWindow& other) {
 
 void GameWindow::deleteWindow() {
 	SDL_DestroyRenderer(windowRen);
-	SDL_DestroyWindow(gameWindow);
+	SDL_DestroyWindow(window);
 	SDL_FreeSurface(windowSurface);
 	SDL_FreeSurface(imageSurface);
 
@@ -140,7 +139,7 @@ void GameWindow::deleteWindow() {
 	windowSurface = nullptr;
 	gameTitle = nullptr;
 	windowRen = nullptr;
-	gameWindow = nullptr;
+	window = nullptr;
 
 	SDL_Quit();
 }

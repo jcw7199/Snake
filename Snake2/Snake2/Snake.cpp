@@ -1,11 +1,13 @@
 #include "Snake.h"
 
-Snake::Snake():Game(){
+Snake::Snake() : Game("Snake", snakeHead, map, mapRect)
+{ 
+
 	cout << "Snake::Snake()\n";
 	srand(time(NULL));
 	
-	int center_x = screenWidth / 2;
-	int center_y = screenHeight / 2;
+	int center_x = mapRect.w / 2;
+	int center_y = mapRect.h / 2;
 	lastDirection = Direction::NONE;
 	appleRect = { 0,0,snakeBodyDimensions * 2,snakeBodyDimensions * 2 };
 	snakeRect = { center_x,center_y,snakeBodyDimensions,snakeBodyDimensions };
@@ -13,7 +15,7 @@ Snake::Snake():Game(){
 	apple = new GameObject(appleRect, "images/apple/1.png", MOVEMENT_TYPE::STATIC, Direction::NONE);
 	snakeHead = new GameObject(snakeRect, "images/head.png", MOVEMENT_TYPE::CONSTANT, Direction::NONE);
 	snakeTail = new GameObject(snakeRect, "images/tail.png", MOVEMENT_TYPE::CONSTANT, Direction::NONE);
-	background = new GameObject(*gameWindow->windowRect, "images/map.png", MOVEMENT_TYPE::STATIC, Direction::NONE);
+	map = new GameObject(mapRect, "images/map.png", MOVEMENT_TYPE::STATIC, Direction::NONE);
 
 	gamePlayer = snakeHead;
 	gameTitle = "Snake Game";
@@ -28,13 +30,21 @@ Snake::Snake():Game(){
 
 void Snake::start() {
 	cout << "Snake::start\n";
-	
-	while (gameEvents()) {
-		
-		
-		SDL_Delay(1000 / 30);
+	//initialize background
+	SDL_Surface* mapSurface = SDL_LoadBMP("images/map.bmp");
+	SDL_Rect mapRect = SDL_Rect{ SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mapSurface->w, mapSurface->h };
+	GameObject map = GameObject(mapRect, "images/map.bmp");
 
-	}   
+	//initialize game window
+	gameWindow = new GameWindow("Hello World", mapRect);
+
+
+	gameWindow->init();
+	gameWindow->loadObject(map);
+
+	gameWindow->eventHandler();
+	gameWindow->deleteWindow();
+
 }
 
 bool Snake::gameEvents() {

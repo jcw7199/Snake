@@ -2,13 +2,13 @@
 
 using namespace std;
 
-Game::Game(const char* title, GameObject *player, SDL_Rect windowDimensions){
+Game::Game(const char* title, GameObject *player, GameObject* background, SDL_Rect windowDimensions){
 	cout << "Game::Game()\n";
 	//cout << player.getRect().x << endl;
 	isRunning = true;
 	gameTitle = title;
-	gameWindow = new GameWindow(gameTitle, "images/map.bmp", windowDimensions);
-	
+	gameWindow = new GameWindow(gameTitle, windowDimensions);
+	gameBackground = background;
 	if (player != nullptr) {
 		cout << "player " << player->getID() << " " << player->getTextureFile();
 		gamePlayer = player;
@@ -28,19 +28,7 @@ void Game::start() {
 	cout << "Game::Start\n";
 	cout << gamePlayer->getTextureFile() << endl;
 	cout << gameObjects.size() << endl;
-	
-	while (isRunning) {
-		//cout << "running\n";
-		gameWindow->present();
-		isRunning = gameEvents();
-	
-		//cout << "o\n";
-		for (int i = 0; i < gameObjects.size(); i++) {
-			if(gameObjects[i] != nullptr)
-				gameWindow->addToRenderer(gameObjects[i]->getTextureFile(), *gameObjects[i]->getRect());
-		}
-		
-	}
+
 }
 
 void Game::quit(){
