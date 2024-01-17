@@ -12,6 +12,8 @@ GameObject::GameObject(SDL_Rect rect, const char* file, MOVEMENT_TYPE mt, Direct
 	objectMVMT = mt;
 	textureFile = file;
 	objectDir = dir;
+	objectSurface = nullptr;
+	
 	cout << "	Object created\n";
 }
 
@@ -59,6 +61,7 @@ void GameObject::destroyObject() {
 	ID = NULL;
 	textureFile = nullptr;
 	objectRect = {0, 0, 0, 0};
+	SDL_FreeSurface(objectSurface);
 }
 
 GameObject::~GameObject() {

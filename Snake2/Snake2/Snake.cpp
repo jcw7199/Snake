@@ -14,10 +14,10 @@ Snake::Snake() : Game("Snake", snakeHead, map, mapRect)
 	int center_x = mapRect.w / 2;
 	int center_y = mapRect.h / 2;
 	lastDirection = Direction::NONE;
-	appleRect = { 0,0,snakeBodyDimensions * 2,snakeBodyDimensions * 2 };
+	appleRect = { 0,0,snakeBodyDimensions,snakeBodyDimensions};
 	snakeRect = { center_x, center_y, snakeBodyDimensions,snakeBodyDimensions };
 
-	apple = new GameObject(appleRect, "images/apple/1.png", MOVEMENT_TYPE::STATIC, Direction::NONE);
+	apple = new GameObject(appleRect, "images/apple/1.bmp", MOVEMENT_TYPE::STATIC, Direction::NONE);
 	snakeHead = new GameObject(snakeRect, "images/head.bmp", MOVEMENT_TYPE::CONSTANT, Direction::NONE);
 	snakeTail = new GameObject(snakeRect, "images/tail.png", MOVEMENT_TYPE::CONSTANT, Direction::NONE);
 	map = new GameObject(mapRect, "images/map.bmp", MOVEMENT_TYPE::STATIC, Direction::NONE);
@@ -49,8 +49,8 @@ void Snake::start() {
 	gameWindow->init();
 	gameWindow->loadObject(map);
 	gameWindow->loadObject(snakeHead);
-	
-	gameWindow->eventHandler();
+	gameWindow->loadObject(apple);
+	gameEvents();
 	gameWindow->deleteWindow();
 
 }
@@ -59,64 +59,79 @@ bool Snake::gameEvents() {
 	SDL_Event e;
 	bool running = true;
 	lastDirection = snakeHead->getDir();
+	while (running == true)
+	{
+		while (SDL_PollEvent(&e) > 0) {
+			cout << "snake: " << snakeHead->getRect()->x << ", " << snakeHead->getRect()->y << endl;
+			cout << "apple: " << apple->getRect()->x << ", " << apple->getRect()->y << endl;
 
-	if (SDL_PollEvent(&e) > 0) {
 			if (e.type == SDL_KEYDOWN) {
+				cout << "key down" << endl;
 				switch (e.key.keysym.sym)
 				{
 				case SDLK_UP:
-					gamePlayer->setDir(Direction::UP);
+					snakeHead->setDir(Direction::UP);
 					break;
 
 				case SDLK_DOWN:
-					gamePlayer->setDir(Direction::DOWN);
+					snakeHead->setDir(Direction::DOWN);
 					break;
 
 				case SDLK_LEFT:
-					gamePlayer->setDir(Direction::LEFT);
+					snakeHead->setDir(Direction::LEFT);
 					break;
 
 				case SDLK_RIGHT:
-					gamePlayer->setDir(Direction::RIGHT);
+					snakeHead->setDir(Direction::RIGHT);
 					break;
 
 				case SDLK_q:
-					quit();
+					cout << "quitting" << endl;
 					running = false;
+					break;
 
 				default:
-					gamePlayer->setDir(Direction::NONE);
+					snakeHead->setDir(Direction::NONE);
 					break;
 				}
+				
+				if (backwardsCheck() == false)
+				{
+					moveHead();
+					lastDirection = snakeHead->getDir();
+				}
+				else
+				{
+					cout << "backwards movement detected." << endl;
+					snakeHead->setDir(lastDirection);
+				}
 
+				if (appleCollision() == true)
+				{
+					cout << "apple collision detected." << endl;
+					//addTail();
+					respawnApple();
+				}
+
+				animateApple();
+
+				if (borderCollision() == true)
+				{
+					cout << "border collision detected." << endl;
+					cout << snakeHead->getRect()->x << ", " << snakeHead->getRect()->y << endl;
+
+					running = false;
+				}
+				
 			}
 			else {
-				return gameWindow->eventHandler();
+				//cout << "no key down" << endl;
+				running = gameWindow->eventHandler();
 			}
 		}
 
-	if (appleCollision() == true)
-	{
-		addTail();
-		respawnApple();
+		
 	}
-	if (backwardsCheck() == false)
-	{
-		moveBody();
-		lastDirection = snakeHead->getDir();
-	}
-	else
-	{
-		snakeHead->setDir(lastDirection);
-	}
-	
-	animateApple();
-
-	if (borderCollision() == true)
-	{
-		running = false;
-	}
-
 	return running;
 }
 
@@ -138,33 +153,35 @@ bool Snake::backwardsCheck() {
 
 void Snake::moveHead()
 {
-	SDL_Rect snakeRect = *snakeHead->getRect();
 	switch (snakeHead->getDir())
 	{
 		case Direction::UP:
-			snakeRect.y += 5;
-			snakeHead->setRect(snakeRect);
+			snakeHead->getRect()->y -= 5;
 			break;
 
 		case Direction::DOWN:
-			snakeRect.y -= 5;
-			snakeHead->setRect(snakeRect);
+			snakeHead->getRect()->y += 5;
 			break;
 
 		case Direction::LEFT:
-			snakeRect.x -= 5;
-			snakeHead->setRect(snakeRect);
+			snakeHead->getRect()->x -= 5;
 			break;
 
 		case Direction::RIGHT:
-			snakeRect.x += 5;
-			snakeHead->setRect(snakeRect);
+			snakeHead->getRect()->x += 5;
 			break;
 
 		default:
 			break;
 	}
-}
+	SDL_FillRect(gameWindow->windowSurface, NULL, 0x000000);
+	//SDL_FreeSurface(snakeHead->objectSurface);
+	//SDL_UpdateWindowSurface(gameWindow->window);
+	
+	gameWindow->loadObject(map);
+	gameWindow->loadObject(apple);
+	gameWindow->loadObject(snakeHead);
+}	
 
 void Snake::moveBody() {
 	//cout << "Snake::moveSnake()\n";
@@ -182,13 +199,13 @@ void Snake::moveBody() {
 void Snake::animateApple() {
 	switch (appleFrame) {
 	case 1:
-		apple->setTexture("images/apple/1.png");
+		apple->setTexture("images/apple/1.bmp");
 		break;
 	case 5:				   
-		apple->setTexture("images/apple/2.png");
+		apple->setTexture("images/apple/2.bmp");
 		break;			   
 	case 9:		
-		apple->setTexture("images/apple/3.png");
+		apple->setTexture("images/apple/3.bmp");
 		break;
 	}
 
@@ -200,13 +217,12 @@ void Snake::animateApple() {
 void Snake::respawnApple() {
 	int x, y = 0;
 	
-	x = rand() % (screenWidth - snakeBodyDimensions * 2);
-	y = rand() % (screenHeight - snakeBodyDimensions * 2);
+	x = rand() % (screenWidth);
+	y = rand() % (screenHeight);
 	
 
-	apple->setRect({ x, y, snakeBodyDimensions * 2, snakeBodyDimensions * 2 });
-
-
+	apple->getRect()->x = x;
+	apple->getRect()->y = y;
 }
 
 void Snake::addTail() {
@@ -253,9 +269,12 @@ void Snake::addTail() {
 
 bool Snake::appleCollision()
 {
-	if (SDL_RectEquals(snakeHead->getRect(), apple->getRect()))
+	SDL_Rect* collision = nullptr;
+	if (SDL_HasIntersection(snakeHead->getRect(), apple->getRect()) == SDL_TRUE)
 	{
+		cout << "apple collision" << endl;
 		return true;
+		
 	}
 
 	return false;

@@ -18,6 +18,7 @@ private:
 	int ID = -1;
 	
 public:
+	SDL_Surface* objectSurface;
 	GameObject(SDL_Rect rect, const char* file,
 			   MOVEMENT_TYPE mt = MOVEMENT_TYPE::STATIC, Direction dir = Direction::NONE);
 

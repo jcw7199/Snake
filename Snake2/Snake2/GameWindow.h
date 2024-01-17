@@ -17,7 +17,6 @@ public:
 	SDL_Renderer* windowRen;
 	SDL_Surface* windowSurface;
 	SDL_Surface* backgroundSurface;
-	SDL_Surface* imageSurface;
 	SDL_Texture* windowTexture;
 	SDL_Rect windowRect;
 

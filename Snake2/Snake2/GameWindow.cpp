@@ -10,7 +10,6 @@ GameWindow::GameWindow(const char* title, SDL_Rect rect) {
 	windowTexture = nullptr;
 	windowRen = nullptr;
 	windowSurface = nullptr;
-	imageSurface = nullptr;	
 		
 	//windowRen = SDL_CreateRenderer(gameWindow, -1, SDL_RENDERER_SOFTWARE);
 	//windowTexture = SDL_CreateTextureFromSurface(windowRen, windowSurface);
@@ -54,17 +53,17 @@ void GameWindow::loadObject(GameObject* object, SDL_Rect* imageCropAndPosition)
 	bool success = true;
 
 	//Load splash image
-	imageSurface = SDL_LoadBMP(object->getTextureFile());
+	object->objectSurface = SDL_LoadBMP(object->getTextureFile());
 
-	if (imageSurface == NULL)
+	if (object->objectSurface == NULL)
 	{
 		printf("Unable to load image %s! SDL Error: %s\n", object->getTextureFile(), SDL_GetError());
-		success = false;
 	}
 	
 	
+	
 	//windowRect = SDL_Rect{SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 500, 500 };
-	if (SDL_BlitSurface(imageSurface, imageCropAndPosition, windowSurface, object->getRect()) < 0)
+	if (SDL_BlitSurface(object->objectSurface, imageCropAndPosition, windowSurface, object->getRect()) < 0)
 	{
 		cout << "blit error: " << SDL_GetError() << endl;
 	}
@@ -80,20 +79,20 @@ void GameWindow::loadObject(GameObject* object, SDL_Rect* imageCropAndPosition)
 bool GameWindow::eventHandler() {
 	cout << "polling started" << endl;
 	SDL_Event e;
-	bool quit = false;
-	while (quit == false)
-	{
-		while (SDL_PollEvent(&e))
-		{
-			cout << "Polling" << endl;
-			if (e.type == SDL_QUIT)
-			{
-				quit = true;
-			}
-		}
+	bool running = true;
 
+	if (SDL_PollEvent(&e))
+	{
+		cout << "Polling" << endl;
+		if (e.type == SDL_QUIT)
+		{	
+			cout << "quitting" << endl;
+			running = false;
+		}
 	}
-	return quit;
+
+
+	return running;
 }
 
 void GameWindow::addToRenderer(const char* file, SDL_Rect rect) {
@@ -135,9 +134,7 @@ void GameWindow::deleteWindow() {
 	SDL_DestroyRenderer(windowRen);
 	SDL_DestroyWindow(window);
 	SDL_FreeSurface(windowSurface);
-	SDL_FreeSurface(imageSurface);
 
-	imageSurface = nullptr;
 	windowSurface = nullptr;
 	gameTitle = nullptr;
 	windowRen = nullptr;
