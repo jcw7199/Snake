@@ -49,9 +49,7 @@ bool GameWindow::init() {
 
 void GameWindow::loadObject(GameObject* object, SDL_Rect* imageCropAndPosition)
 {
-	//Loading success flag
-	bool success = true;
-
+	
 	//Load splash image
 	object->objectSurface = SDL_LoadBMP(object->getTextureFile());
 
@@ -73,7 +71,7 @@ void GameWindow::loadObject(GameObject* object, SDL_Rect* imageCropAndPosition)
 		cout << "update error: " << SDL_GetError() << endl;
 	}
 
-	cout << "image loaded" << endl;
+	//cout << "image loaded" << endl;
 }
 
 bool GameWindow::eventHandler() {

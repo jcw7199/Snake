@@ -28,6 +28,8 @@ Snake::Snake() : Game("Snake", snakeHead, map, mapRect)
 	gameObjects.push_back(snakeHead);
 	gameObjects.push_back(apple);	
 	
+	snakeBody.push_back(snakeHead);
+	tailSize = 1;
 	respawnApple();
 
 	
@@ -64,7 +66,10 @@ bool Snake::gameEvents() {
 		while (SDL_PollEvent(&e) > 0) {
 			cout << "snake: " << snakeHead->getRect()->x << ", " << snakeHead->getRect()->y << endl;
 			cout << "apple: " << apple->getRect()->x << ", " << apple->getRect()->y << endl;
-
+			if (running == false)
+			{
+				break;
+			}
 			if (e.type == SDL_KEYDOWN) {
 				cout << "key down" << endl;
 				switch (e.key.keysym.sym)
@@ -91,13 +96,12 @@ bool Snake::gameEvents() {
 					break;
 
 				default:
-					snakeHead->setDir(Direction::NONE);
 					break;
 				}
 				
 				if (backwardsCheck() == false)
 				{
-					moveHead();
+					moveBody();
 					lastDirection = snakeHead->getDir();
 				}
 				else
@@ -106,36 +110,48 @@ bool Snake::gameEvents() {
 					snakeHead->setDir(lastDirection);
 				}
 
-				if (appleCollision() == true)
-				{
-					cout << "apple collision detected." << endl;
-					//addTail();
-					respawnApple();
-				}
+				
 
 				animateApple();
 
-				if (borderCollision() == true)
-				{
-					cout << "border collision detected." << endl;
-					cout << snakeHead->getRect()->x << ", " << snakeHead->getRect()->y << endl;
-
-					running = false;
-				}
+				
 				
 			}
-			else {
-				//cout << "no key down" << endl;
+			else
+			{
 				running = gameWindow->eventHandler();
+				
+				//cout << "no key down" << endl;	
 			}
 		}
 
-		
+		moveBody();
+		if (appleCollision() == true)
+		{
+			cout << "apple collision detected." << endl;
+			//addTail();
+			respawnApple();
+		}
+
+		if (borderCollision() == true)
+		{
+			cout << "border collision detected." << endl;
+			cout << snakeHead->getRect()->x << ", " << snakeHead->getRect()->y << endl;
+
+			running = false;
+		}
+		SDL_Delay(10);
 	}
 	return running;
 }
 
 bool Snake::backwardsCheck() {
+	
+	if (snakeHead->getDir() == Direction::NONE)
+	{
+		return false;
+	}
+	
 	if (   
 		   (snakeHead->getDir() == Direction::UP && lastDirection == Direction::DOWN)
 		|| (snakeHead->getDir() == Direction::DOWN && lastDirection == Direction::UP)
@@ -150,50 +166,53 @@ bool Snake::backwardsCheck() {
 	}
 }
 
-
 void Snake::moveHead()
 {
+
 	switch (snakeHead->getDir())
 	{
-		case Direction::UP:
-			snakeHead->getRect()->y -= 5;
-			break;
+	case Direction::UP:
+		snakeHead->getRect()->y -= 3;
+		break;
 
-		case Direction::DOWN:
-			snakeHead->getRect()->y += 5;
-			break;
+	case Direction::DOWN:
+		snakeHead->getRect()->y += 3;
+		break;
 
-		case Direction::LEFT:
-			snakeHead->getRect()->x -= 5;
-			break;
+	case Direction::LEFT:
+		snakeHead->getRect()->x -= 3;
+		break;
 
-		case Direction::RIGHT:
-			snakeHead->getRect()->x += 5;
-			break;
+	case Direction::RIGHT:
+		snakeHead->getRect()->x += 3;
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
+
 	SDL_FillRect(gameWindow->windowSurface, NULL, 0x000000);
 	//SDL_FreeSurface(snakeHead->objectSurface);
 	//SDL_UpdateWindowSurface(gameWindow->window);
-	
 	gameWindow->loadObject(map);
 	gameWindow->loadObject(apple);
-	gameWindow->loadObject(snakeHead);
+	//gameWindow->loadObject(snakeHead);	
+
+	for (GameObject* obj : snakeBody)
+	{
+		gameWindow->loadObject(obj);
+	}
+	
 }	
 
 void Snake::moveBody() {
 	//cout << "Snake::moveSnake()\n";
-	
-	for (int i = 0; i < tailSize - 1; i++) {
-		
+	for (int i = 0; i < tailSize - 2; i++)
+	{
 		snakeBody[i] = snakeBody[i + 1];
-		
 	}
-	
-	moveHead();
 
+	moveHead();
 }
 
 void Snake::animateApple() {
@@ -215,10 +234,14 @@ void Snake::animateApple() {
 }
 
 void Snake::respawnApple() {
-	int x, y = 0;
+	int x = 0, y = 0;
 	
-	x = rand() % (screenWidth);
-	y = rand() % (screenHeight);
+	while (x == 0 || y == 0)
+	{
+		x = rand() % (screenWidth - snakeBodyDimensions);
+		y = rand() % (screenHeight - snakeBodyDimensions);
+	}
+	
 	
 
 	apple->getRect()->x = x;
@@ -227,43 +250,66 @@ void Snake::respawnApple() {
 
 void Snake::addTail() {
 	//cout << tailSize << " Snake::addTail()\n";
-	SDL_Rect tailRect{ 0, 0, snakeBodyDimensions, snakeBodyDimensions };
-	SDL_Rect tempRect;
-	if (tailSize == 0) {
-		tempRect = *snakeHead->getRect();
+	GameObject* newTail;
+	SDL_Rect newTailRect;
+	
+	
+	//cout << s_head->getRect().x << ", " << s_head->getRect().y << " newTail: " << tailRect.x << ", " << tailRect.y << endl;
+	
+	if (tailSize == 0)
+	{
+		newTail = new GameObject(*snakeHead->getRect(), "images/tail.bmp");
 	}
-	else {
-		tempRect = *snakeBody[tailSize - 1]->getRect();
-	}
-	switch (snakeHead->getDir()) {
+	else
+	{	
+		SDL_Rect tailRect = *snakeBody[tailSize - 1]->getRect();
+		switch (snakeHead->getDir())
+		{
 		case Direction::UP:
-			tailRect.x = tempRect.x;
-			tailRect.y = tempRect.y - snakeBodyDimensions;
-			break;								 
-												 
-		case Direction::DOWN:					 
-			tailRect.x = tempRect.x;			 
-			tailRect.y = tempRect.y + snakeBodyDimensions;
-			break;								  
-												  
-		case Direction::LEFT:					  
-			tailRect.x = tempRect.x - snakeBodyDimensions;
-			tailRect.y = tempRect.y;
+			newTailRect = SDL_Rect{
+									tailRect.x,
+									tailRect.y + (snakeBodyDimensions - 5),
+									tailRect.w, tailRect.h };
+			break;
+
+		case Direction::DOWN:
+			newTailRect = SDL_Rect{
+									tailRect.x,
+									tailRect.y - (snakeBodyDimensions - 5),
+									tailRect.w, tailRect.h };
+			break;
+
+		case Direction::LEFT:
+			newTailRect = SDL_Rect{
+									tailRect.x + (snakeBodyDimensions - 5),
+									tailRect.y ,
+									tailRect.w, tailRect.h };
 			break;
 
 		case Direction::RIGHT:
-			tailRect.x = tempRect.x + snakeBodyDimensions;
-			tailRect.y = tempRect.y;
+			newTailRect = SDL_Rect{
+									tailRect.x - (snakeBodyDimensions - 5),
+									tailRect.y ,
+									tailRect.w, tailRect.h };
+			break;
+
+		case Direction::NONE:
+			newTailRect = SDL_Rect{
+									tailRect.x,
+									tailRect.y - (snakeBodyDimensions - 5),
+									tailRect.w, tailRect.h };
 			break;
 
 		default:
+			newTailRect = SDL_Rect{ 0, 0, 0, 0 };
 			break;
 	}
-	//cout << s_head->getRect().x << ", " << s_head->getRect().y << " newTail: " << tailRect.x << ", " << tailRect.y << endl;
-	tailSize++;
-	GameObject * newTail = new GameObject(tailRect, "images/tail.png");
+		
+		
+		newTail = new GameObject(newTailRect, "images/tail.bmp");
+	}
 	snakeBody.push_back(newTail);
-	snakeTail->setRect(tailRect);
+	tailSize++;
 	
 }
 
