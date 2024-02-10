@@ -2,47 +2,57 @@
 
 
 
+GameObject::GameObject()
+{
+	objectRect = SDL_Rect{ 0, 0, 0, 0 };
+	objectDir = Direction::NONE;
+	objectMVMT = MOVEMENT_TYPE::STATIC;
+	textureFile = nullptr;
+	objectSurface = nullptr;
+}
+
 GameObject::GameObject(SDL_Rect rect, const char* file, MOVEMENT_TYPE mt, Direction dir) {
 	cout << "GameObject::GameObject(): " << file << endl;
 	if (file == nullptr) 
 		cout << "	No file\n";
-	total++;
-	ID = total;
-	objectRect = rect;
+
+	objectRect.x = rect.x;
+	objectRect.y = rect.y;
+	objectRect.w = rect.w;
+	objectRect.h = rect.h;
+
 	objectMVMT = mt;
 	textureFile = file;
 	objectDir = dir;
-	objectSurface = nullptr;
+	objectSurface = SDL_LoadBMP(textureFile);
 	
 	cout << "	Object created\n";
 }
 
-int GameObject::total = 0;
-GameObject GameObject::operator=(GameObject& other) {
+
+GameObject GameObject::operator=(GameObject other) {
 	cout << "GameObject::op=\n";
-	if (this != &other) {
-		this->destroyObject();
-		GameObject o(*other.getRect(), other.getTextureFile(), other.getMVMT(), other.getDir());
-	
-		total++;
-		ID = total;
+
+	if (this != &other && &other != nullptr) {		
+		objectRect = other.objectRect;
+		objectMVMT = other.objectMVMT;
+		textureFile = other.textureFile;
+		objectDir = other.objectDir;
+		objectSurface = other.objectSurface;
 	}
-	
+
 	return *this;
 }
 
-GameObject::GameObject(const GameObject& other) {
-	cout << "GameObject::GameObject(GameObject& other) " << other.ID << other.textureFile;
-	total++; 
-	ID = total;
-	objectRect = other.objectRect;
-	objectMVMT = other.objectMVMT;
-	textureFile = other.textureFile;
-	objectDir = other.objectDir;
-}
 
 void GameObject::setTexture(const char* file){
 	textureFile = file;
+}
+
+void GameObject::printRect()
+{
+	cout << "Rect: x = " << objectRect.x << ", y = " << objectRect.y
+		<< ", w = " << objectRect.w << ", h = " << objectRect.h << endl;
 }
 
 void GameObject::setRect(SDL_Rect rect) {
@@ -56,14 +66,11 @@ SDL_Rect* GameObject::getRect() {
 }
 
 void GameObject::destroyObject() {
-	cout << this->getID() << " GameObject::destroyObject()\n";
-	total--;
-	ID = NULL;
-	textureFile = nullptr;
-	objectRect = {0, 0, 0, 0};
+	//cout << " GameObject::destroyObject()\n";
 	SDL_FreeSurface(objectSurface);
 }
 
 GameObject::~GameObject() {
-	this->destroyObject();
+	if (this != nullptr)
+		this->destroyObject();
 }

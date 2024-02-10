@@ -61,9 +61,15 @@ void GameWindow::loadObject(GameObject* object, SDL_Rect* imageCropAndPosition)
 	
 	
 	//windowRect = SDL_Rect{SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 500, 500 };
-	if (SDL_BlitSurface(object->objectSurface, imageCropAndPosition, windowSurface, object->getRect()) < 0)
+	if (SDL_BlitScaled(object->objectSurface, NULL, windowSurface, object->getRect()) < 0)
 	{
 		cout << "blit error: " << SDL_GetError() << endl;
+	}
+	else
+	{
+		//cout << "no blit error: " << object->getTextureFile() << ": x = " << object->getRect()->x
+			//<< ", y = " << object->getRect()->y << ", w = " << object->getRect()->w
+			//<< ", h = " << object->getRect()->h << endl;
 	}
 
 	if (SDL_UpdateWindowSurface(window) < 0)
@@ -75,13 +81,13 @@ void GameWindow::loadObject(GameObject* object, SDL_Rect* imageCropAndPosition)
 }
 
 bool GameWindow::eventHandler() {
-	cout << "polling started" << endl;
+	//cout << "polling started" << endl;
 	SDL_Event e;
 	bool running = true;
 
 	if (SDL_PollEvent(&e))
 	{
-		cout << "Polling" << endl;
+		//cout << "Polling" << endl;
 		if (e.type == SDL_QUIT)
 		{	
 			cout << "quitting" << endl;

@@ -2,25 +2,11 @@
 
 using namespace std;
 
-Game::Game(const char* title, GameObject *player, GameObject* background, SDL_Rect windowSize){
+Game::Game(){
 	cout << "Game::Game()\n";
 	//cout << player.getRect().x << endl;
-	isRunning = true;
-	gameTitle = title;
-	gameWindow = new GameWindow(gameTitle, windowSize);
-	gameBackground = background;
-	if (player != nullptr) {
-		cout << "player " << player->getID() << " " << player->getTextureFile();
-		gamePlayer = player;
-		cout << gamePlayer->getID() << " " << gamePlayer->getTextureFile();
-
-		gameObjects.push_back(gamePlayer);
-		
-	}
-	else {
-		gamePlayer = nullptr;
-	}
-
+	isRunning = false;
+	gameTitle = nullptr;	
 	cout << "	Game created\n";
 }
 
@@ -44,6 +30,15 @@ void Game::quit(){
 	}
 	gameObjects.empty();
 }
+
+void Game::loadGameObjects()
+{
+	for (GameObject *obj : gameObjects)
+	{		
+		gameWindow->loadObject(obj);
+	}	
+}
+
 
 Game::~Game() {
 	this->quit();

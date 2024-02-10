@@ -1,5 +1,7 @@
 ﻿  Snake.cpp
-D:\Documents\school\projects\Snake2\Snake2\Snake2\Snake.cpp(7,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-D:\Documents\school\projects\Snake2\Snake2\Snake2\Snake.cpp(386,17): warning C4834: discarding return value of function with 'nodiscard' attribute
-D:\Documents\school\projects\Snake2\Snake2\Snake2\Snake.cpp(381): warning C4715: 'Snake::gameOver': not all control paths return a value
+D:\Documents\school\projects\Snake2\Snake2\Snake2\Snake.cpp(8,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+D:\Documents\school\projects\Snake2\Snake2\Snake2\Snake.cpp(232,12): warning C4101: 'currentDir': unreferenced local variable
+D:\Documents\school\projects\Snake2\Snake2\Snake2\Snake.cpp(231,11): warning C4101: 'currentRect': unreferenced local variable
+D:\Documents\school\projects\Snake2\Snake2\Snake2\Snake.cpp(489,17): warning C4834: discarding return value of function with 'nodiscard' attribute
+D:\Documents\school\projects\Snake2\Snake2\Snake2\Snake.cpp(484): warning C4715: 'Snake::gameOver': not all control paths return a value
   Snake2.vcxproj -> D:\Documents\school\projects\Snake2\Snake2\x64\Debug\Snake2.exe
