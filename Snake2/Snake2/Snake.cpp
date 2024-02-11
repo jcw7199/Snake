@@ -2,66 +2,92 @@
 
 using namespace std;
 
+// Snake constructor
 Snake::Snake()
 { 
 	cout << "Snake::Snake()\n";
-	srand(time(NULL));
+	
+	// initialize member variables
 	gamePlayer = snakeHead;
 	gameTitle = "Snake Game";
-
+	snakeHead = new SnakeBodyPart(snakeRect, "images/head.bmp", MOVEMENT_TYPE::CONSTANT, Direction::NONE);
+	apple = new GameObject(appleRect, "images/apple/1.bmp", MOVEMENT_TYPE::STATIC, Direction::NONE);;
+	map = new GameObject(mapRect, "images/map.bmp", MOVEMENT_TYPE::STATIC, Direction::NONE);
+	retryScreen = new GameObject(mapRect, "images/game_over.bmp");
 	gameWindow = new GameWindow(gameTitle, windowRect);
-
-
-	//gameObjects.push_back(gamePlayer);
- 
 	tailSize = 1;
-	
 	isRunning = true;
-	respawnApple();
+	appleFrame = 1;
 }
 
+// starts game
 void Snake::start() {
 	cout << "Snake::start\n";
-	//initialize background
 	
-	//GameObject map = GameObject(mapRect, "images/map.bmp");
-	//
-	//SDL_Surface* temp = SDL_LoadBMP("images/head.bmp");
-	//SDL_Rect tempRect = SDL_Rect{ 250, 250, temp->w, temp->h };
-	//GameObject head = GameObject(tempRect, "images/head.bmp");
-	//initialize game window
-	//gameWindow = new GameWindow("Hello World", windowRect);
-	
-
+	// initialize window
 	gameWindow->init();
+
+	// adds snake objects to game objects list for loading.
 	gameObjects.push_back(map);
 	gameObjects.push_back(apple);
 	gameObjects.push_back(snakeHead);
 	snakeBody.push_back(snakeHead);
+	
+	// spawn apple
+	respawnApple();
 
+	// load objects
 	loadGameObjects();
-	gameEvents();
-	gameWindow->deleteWindow();
+
+	//if not quitting
+	if (gameEvents() == false)
+	{
+		// delete current objects and restart game.
+		delete gameWindow;
+		delete snakeHead;
+		delete apple;
+		delete map;
+		delete retryScreen;
+		
+		Snake newSnake = Snake();
+		newSnake.start();
+	}
+	else
+	{
+		// exit the game
+		Snake::quit();
+	}
 
 }
 
+// Main game events
 bool Snake::gameEvents() {
 	cout << "Snake::Game events()" << endl;
 	SDL_Event e;
-	bool running = true;
+	bool quitting = false;
 	//lastDirection = snakeHead.getDir();
-	while (running == true)
+	int fps = 60;
+
+	// desired time between frames
+	int desiredDelta = 3000 / fps;
+
+	// main event loop
+	while (quitting == false)
 	{
+		int startTick = SDL_GetTicks();
+
+		loadGameObjects();
+
 		if (SDL_PollEvent(&e) > 0) {
-			//cout << "snake: " << snakeHead.getRect()->x << ", " << snakeHead.getRect()->y << endl;
-			//cout << "apple: " << apple.getRect()->x << ", " << apple.getRect()->y << endl;
-			if (running == false)
+
+			if (quitting == true)
 			{
 				break;
 			}
-			if (e.type == SDL_KEYDOWN) {
-				cout << "key down" << endl;
 
+			// if key down
+			if (e.type == SDL_KEYDOWN)
+			{
 				switch (e.key.keysym.sym)
 				{
 				case SDLK_UP:
@@ -82,13 +108,14 @@ bool Snake::gameEvents() {
 
 				case SDLK_q:
 					cout << "quitting" << endl;
-					running = false;
+					quitting = true;
 					break;
 
 				default:
 					break;
 				}
-				
+
+				// prevent backwards movement
 				if (backwardsCheck() == true)
 				{
 					cout << "backwards movement detected." << endl;
@@ -96,47 +123,77 @@ bool Snake::gameEvents() {
 				}
 				else
 				{
-					//snakeHead.setDir(nextDirection);
+					snakeBody.front()->setDir(snakeBody.front()->nextDirection);
 				}
 
 				animateApple();
 			}
 			else
 			{
-				running = gameWindow->eventHandler();
-				
-				//cout << "no key down" << endl;	
+				// check for manual closure of game window
+				quitting = gameWindow->eventHandler();
 			}
 		}
+
 
 		if (appleCollision() == true)
 		{
 			cout << "apple collision detected." << endl;
 			snakeBody.front()->printRect();
-			//SDL_TriggerBreakpoint();
 			addTail();
 			respawnApple();
 		}
 
 		if (borderCollision() == true)
 		{
-			cout << "border collision detected." << endl;			
+			cout << "border collision detected." << endl;
 			snakeBody.front()->printRect();
 
-			running = false;
+			quitting = true;
 		}
-		
-		
-		moveBody();		
 
-		SDL_Delay(50);		
-		loadGameObjects();
+		if (bodyCollision() == true)
+		{
+			cout << "body collision detected." << endl;
+			quitting = true;
+		}
 
+
+		moveBody();
+
+
+		int endTick = SDL_GetTicks();
+		int delta = endTick - startTick;
+
+		if (delta < desiredDelta)
+		{
+			SDL_Delay(desiredDelta - delta);
+
+		}
+
+		if (quitting == true)
+		{
+			quitting = gameOver();
+
+			if (quitting == false)
+			{
+				cout << "restarting game" << endl;
+				gameObjects.clear();
+				snakeBody.clear();
+				return quitting;
+			}
+			else
+			{
+				//SDL_TriggerBreakpoint();
+				return quitting;
+			}
+		}
 
 	}
-	return running;
+	return quitting;
 }
 
+// Detects backwards movement
 bool Snake::backwardsCheck() {
 	cout << "Snake::backwardscheck()" << endl;
 
@@ -159,6 +216,7 @@ bool Snake::backwardsCheck() {
 	}
 }
 
+// moves snake head
 void Snake::moveHead()
 {
 	// set head direction, so snake can move together.
@@ -210,53 +268,21 @@ void Snake::moveHead()
 	//lastDirection = snakeHead.getDir();
 }
 
+// moves snake body
 void Snake::moveBody()
 {
-	//cout << "\n--------------------------\n";
-	//cout << "Snake::moveBody\n";
-	//lastDirection = nextDirection;
+	
 	list<SnakeBodyPart*>::reverse_iterator rev_it;
 	list<SnakeBodyPart*>::reverse_iterator prevIt;
 	
-	//list<SnakeBodyPart*>::iterator it;
-	//list<SnakeBodyPart*>::iterator nextIt;
 
 	SnakeBodyPart* previous;
 	SnakeBodyPart* current;
-	//SnakeBodyPart* next;
-	
-	SDL_Rect previousRect = *snakeBody.front()->getRect();
-	Direction previousDir = snakeBody.front()->getDir();
-	
-	SDL_Rect currentRect;
-	Direction currentDir;
-
-	//moveHead();
 	
 	
-	/*
-	if (tailSize > 1)
-	{
-		it = std::next(snakeBody.begin(), 1);
 
-		while (it != snakeBody.end())
-		{		
-			current = *it;
-			currentRect = *current->getRect();
-			currentDir = current->getDir();
-
-			current->setRect(previousRect);
-			current->setDir(previousDir);
-
-			
-			
-			previousRect = currentRect;
-			previousDir = currentDir;
-			std::advance(it, 1);
-		}
-
-	}
-	*/
+	//sets each body part to the one before it. 
+	//This allows the tail to trail the body	
 	for (rev_it = snakeBody.rbegin(); rev_it != snakeBody.rend(); ++rev_it)
 	{
 		prevIt = next(rev_it, 1);
@@ -267,9 +293,10 @@ void Snake::moveBody()
 
 			current->nextDirection = previous->currentDirection;			
 			current->lastDirection = current->currentDirection;
-			current->nextDirection = previous->lastDirection;
-
+			current->currentDirection = previous->lastDirection;
+			
 			current->setRect(*previous->getRect());
+
 		}
 		else
 		{
@@ -278,6 +305,7 @@ void Snake::moveBody()
 
 	}
 	
+
 
 	int i = 0;
 	cout << "printing current body\n\n\n" << endl;
@@ -310,6 +338,7 @@ void Snake::animateApple()
 		appleFrame = 1;
 }
 
+// spawns an apple within the bounds of the game.
 void Snake::respawnApple() {
 	int x = 0, y = 0;
 	
@@ -325,9 +354,9 @@ void Snake::respawnApple() {
 	apple->getRect()->y = y;
 }
 
+// Adds a tail to the snake using the body dimensions as an offset.
 void Snake::addTail() {
 	cout << tailSize << " Snake::addTail()\n";
-	//SDL_TriggerBreakpoint();
 
 	SDL_Rect newTailRect = SDL_Rect{ 0, 0, 0, 0 };
 	SnakeBodyPart* currentTail = snakeBody.back();
@@ -341,7 +370,7 @@ void Snake::addTail() {
 		cout << "direction up, add tail" << endl;
 		newTailRect = SDL_Rect{
 								tailRect.x,
-								tailRect.y + snakeBodyDimensions,
+								tailRect.y + snakeBodyDimensions + 5,
 								tailRect.w, tailRect.h };
 		break;
 
@@ -349,14 +378,14 @@ void Snake::addTail() {
 		cout << "direction down, add tail" << endl;
 		newTailRect = SDL_Rect{
 								tailRect.x,
-								tailRect.y - snakeBodyDimensions,
+								tailRect.y - snakeBodyDimensions - 5,
 								tailRect.w, tailRect.h };
 		break;
 
 	case Direction::LEFT:
 		cout << "direction left, add tail" << endl;
 		newTailRect = SDL_Rect{
-								tailRect.x + snakeBodyDimensions,
+								tailRect.x + snakeBodyDimensions + 5,
 								tailRect.y,
 								tailRect.w, tailRect.h };
 		break;
@@ -365,7 +394,7 @@ void Snake::addTail() {
 		cout << "direction right, add tail" << endl;
 
 		newTailRect = SDL_Rect{
-								tailRect.x - snakeBodyDimensions,
+								tailRect.x - snakeBodyDimensions - 5,
 								tailRect.y,
 								tailRect.w, tailRect.h };
 		break;
@@ -399,9 +428,10 @@ void Snake::addTail() {
 	tailSize++;
 	cout << "tail size: " << snakeBody.size() <<" new tail: ";
 	snakeBody.back()->printRect();
-	//SDL_TriggerBreakpoint();
+
 }
 
+// Detects collision between snake head and apples.
 bool Snake::appleCollision()
 {
 	SDL_Rect* collision = nullptr;
@@ -415,27 +445,28 @@ bool Snake::appleCollision()
 	return false;
 }
 
+// Detects collisions with border.
 bool Snake::borderCollision() {
 
-	if (snakeBody.front()->getRect()->x == 0)
+	if (snakeBody.front()->getRect()->x <= 0)
 	{
 		cout << "left border" << endl;
 		return true;
 	}
 
-	if (snakeBody.front()->getRect()->x + snakeBodyDimensions == screenWidth)
+	if (snakeBody.front()->getRect()->x + snakeBodyDimensions >= screenWidth)
 	{
 		cout << "right border" << endl;
 		return true;
 	}
 
-	if (snakeBody.front()->getRect()->y == 0)
+	if (snakeBody.front()->getRect()->y <= 0)
 	{
 		cout << "up border" << endl;
 		return true;
 	}
 
-	if (snakeBody.front()->getRect()->y + snakeBodyDimensions == screenHeight)
+	if (snakeBody.front()->getRect()->y + snakeBodyDimensions >= screenHeight)
 	{
 		cout << "down border" << endl;
 		return true;
@@ -443,52 +474,74 @@ bool Snake::borderCollision() {
 	return false;
 }
 
+// Detects collisons with the head and its own body.
 bool Snake::bodyCollision()
 {
-	return true;
+
+	list<SnakeBodyPart*>::reverse_iterator rev_it;
+	list<SnakeBodyPart*>::reverse_iterator prevIt;
+
+
+	SnakeBodyPart* previous;
+	SnakeBodyPart* current;
+
+		
+	for (rev_it = snakeBody.rbegin(); rev_it != snakeBody.rend(); ++rev_it)
+	{
+		if (next(rev_it, 1) != snakeBody.rend())
+		{
+			current = *rev_it;
+			if (SDL_HasIntersection(snakeBody.front()->getRect(), current->getRect()) == SDL_TRUE)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
+// Presents a game over screen where the player has the option
+// to play again or quit entirely
 bool Snake::gameOver() {
 	cout << "Snake::GameOver()\n";
 	SDL_Event e;
 	
 	snakeBody.clear();
-	snakeBody.front()->setRect({ screenWidth / 2, screenHeight / 2, snakeBodyDimensions, snakeBodyDimensions });
-	snakeBody.front()->setDir(Direction::NONE);
+	gameObjects.clear();
+	gameObjects.push_back(retryScreen);
 	tailSize = 0;
-	//s_body.push_back(s_head->getRect());
-	gameWindow->present();
-	gameWindow->addToRenderer("images/game_over.png", gameWindow->windowRect);
-	gameWindow->present();
-	bool quit = true;
-	while (quit) {
-		while (SDL_PollEvent(&e) > 0) {
-			gameWindow->addToRenderer("images/game_over.png", gameWindow->windowRect);
-			gameWindow->present();
-
+	bool quitting = false;
+	loadGameObjects();
+	while (true) {
+		if (SDL_PollEvent(&e) > 0) {
+			cout << "end event\n";
 			if (e.type == SDL_KEYDOWN) {
-				switch (e.key.keysym.sym) {
+				switch (e.key.keysym.sym)
+				{
 				case SDLK_q:
-					return false;
-
-				case SDLK_RETURN:
+					cout << "quitting\n";
 					return true;
 
-				default:
-					break;
+				case SDLK_RETURN:
+					//SDL_TriggerBreakpoint();
+					cout << "restarting\n";
+					return false;
 				}
+				gameWindow->eventHandler();
 			}
-
-		}
+		}	
 	}
 }
 
+// Clears all game objects
 void Snake::quit() {
 	cout << "Snake::quit\n";
 	
-	snakeBody.empty();
+	snakeBody.clear();
+	gameObjects.clear();
 }
 
+// Snake destructor
 Snake::~Snake() {
 	cout << "Snake::~Snake\n";
 	Snake::quit();

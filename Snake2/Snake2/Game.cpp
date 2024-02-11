@@ -21,14 +21,11 @@ void Game::quit(){
 	cout << "Game::quit()\n";
 	isRunning = false;
 	//gamePlayer->destroyObject();
-	gameWindow->deleteWindow();
+	delete gameWindow;
 	gameWindow = nullptr;
 	gameTitle = nullptr;
 
-	for (int i = 0; i < gameObjects.size(); i++) {
-			//gameObjects[i]->destroyObject();
-	}
-	gameObjects.empty();
+	gameObjects.clear();
 }
 
 void Game::loadGameObjects()

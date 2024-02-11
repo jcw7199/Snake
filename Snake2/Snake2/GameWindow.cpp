@@ -56,6 +56,7 @@ void GameWindow::loadObject(GameObject* object, SDL_Rect* imageCropAndPosition)
 	if (object->objectSurface == NULL)
 	{
 		printf("Unable to load image %s! SDL Error: %s\n", object->getTextureFile(), SDL_GetError());
+		
 	}
 	
 	
@@ -63,7 +64,7 @@ void GameWindow::loadObject(GameObject* object, SDL_Rect* imageCropAndPosition)
 	//windowRect = SDL_Rect{SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 500, 500 };
 	if (SDL_BlitScaled(object->objectSurface, NULL, windowSurface, object->getRect()) < 0)
 	{
-		cout << "blit error: " << SDL_GetError() << endl;
+		cout << "object: " << object->getTextureFile() << " -- blit error: " << SDL_GetError() << endl;
 	}
 	else
 	{
@@ -74,7 +75,7 @@ void GameWindow::loadObject(GameObject* object, SDL_Rect* imageCropAndPosition)
 
 	if (SDL_UpdateWindowSurface(window) < 0)
 	{
-		cout << "update error: " << SDL_GetError() << endl;
+		cout << "object: " << object->getTextureFile() << " -- update error: " << SDL_GetError() << endl;
 	}
 
 	//cout << "image loaded" << endl;
@@ -83,7 +84,7 @@ void GameWindow::loadObject(GameObject* object, SDL_Rect* imageCropAndPosition)
 bool GameWindow::eventHandler() {
 	//cout << "polling started" << endl;
 	SDL_Event e;
-	bool running = true;
+	bool quitting = false;
 
 	if (SDL_PollEvent(&e))
 	{
@@ -91,12 +92,12 @@ bool GameWindow::eventHandler() {
 		if (e.type == SDL_QUIT)
 		{	
 			cout << "quitting" << endl;
-			running = false;
+			quitting = true;
 		}
 	}
 
 
-	return running;
+	return quitting;
 }
 
 void GameWindow::addToRenderer(const char* file, SDL_Rect rect) {
