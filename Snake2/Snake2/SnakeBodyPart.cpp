@@ -1,6 +1,6 @@
 #include "SnakeBodyPart.h"
 
-SnakeBodyPart::SnakeBodyPart(SDL_Rect bodyPosition, const char* bodyImage, MOVEMENT_TYPE mvmnt, Direction current) : GameObject(bodyPosition, bodyImage, mvmnt, current)
+SnakeBodyPart::SnakeBodyPart(SDL_Rect bodyPosition, const char* bodyImage, MOVEMENT_TYPE mvmnt, Direction current) : GameObject(bodyPosition, bodyImage, mvmnt)
 {
 	currentDirection = current;
 	lastDirection = Direction::NONE;

@@ -31,12 +31,10 @@ private:
 	GameObject * map;
 	GameObject* retryScreen;
 	
-	bool initSnake();
 	void addTail();
 	void moveHead();
 	void moveBody();
 	void respawnApple();
-	void animateApple();
 	bool backwardsCheck();
 	bool appleCollision();
 	bool borderCollision();

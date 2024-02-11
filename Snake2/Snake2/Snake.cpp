@@ -11,8 +11,8 @@ Snake::Snake()
 	gamePlayer = snakeHead;
 	gameTitle = "Snake Game";
 	snakeHead = new SnakeBodyPart(snakeRect, "images/head.bmp", MOVEMENT_TYPE::CONSTANT, Direction::NONE);
-	apple = new GameObject(appleRect, "images/apple/1.bmp", MOVEMENT_TYPE::STATIC, Direction::NONE);;
-	map = new GameObject(mapRect, "images/map.bmp", MOVEMENT_TYPE::STATIC, Direction::NONE);
+	apple = new GameObject(appleRect, "images/apple/1.bmp", MOVEMENT_TYPE::STATIC);;
+	map = new GameObject(mapRect, "images/map.bmp", MOVEMENT_TYPE::STATIC);
 	retryScreen = new GameObject(mapRect, "images/game_over.bmp");
 	gameWindow = new GameWindow(gameTitle, windowRect);
 	tailSize = 1;
@@ -65,7 +65,8 @@ bool Snake::gameEvents() {
 	cout << "Snake::Game events()" << endl;
 	SDL_Event e;
 	bool quitting = false;
-	//lastDirection = snakeHead.getDir();
+
+
 	int fps = 60;
 
 	// desired time between frames
@@ -118,15 +119,11 @@ bool Snake::gameEvents() {
 				// prevent backwards movement
 				if (backwardsCheck() == true)
 				{
+					// if backwards, set maintain current direction
 					cout << "backwards movement detected." << endl;
 					snakeBody.front()->nextDirection = snakeBody.front()->currentDirection;
 				}
-				else
-				{
-					snakeBody.front()->setDir(snakeBody.front()->nextDirection);
-				}
 
-				animateApple();
 			}
 			else
 			{
@@ -255,17 +252,7 @@ void Snake::moveHead()
 	default:
 		break;
 	}
-	
-	snakeBody.front()->setDir(snakeBody.front()->currentDirection);
-	
-	//SDL_TriggerBreakpoint();
-	//SDL_FreeSurface(snakeHead.objectSurface);
-	//SDL_UpdateWindowSurface(gameWindow->window);
-	//if(tailSize > 1 )
-		//moveBody();
-
-	//SDL_TriggerBreakpoint();
-	//lastDirection = snakeHead.getDir();
+		
 }
 
 // moves snake body
@@ -317,25 +304,6 @@ void Snake::moveBody()
 		i++;
 	}
 	cout << "finished current body\n\n\n" << endl;
-}
-
-void Snake::animateApple()
-{
-	switch (appleFrame) {
-	case 1:
-		apple->setTexture("images/apple/1.bmp");
-		break;
-	case 5:				   
-		apple->setTexture("images/apple/2.bmp");
-		break;			   
-	case 9:		
-		apple->setTexture("images/apple/3.bmp");
-		break;
-	}
-
-	appleFrame++;
-	if (appleFrame > 9)
-		appleFrame = 1;
 }
 
 // spawns an apple within the bounds of the game.
@@ -416,10 +384,11 @@ void Snake::addTail() {
 
 
 	SnakeBodyPart* newTail = new SnakeBodyPart(newTailRect, "images/tail.bmp", MOVEMENT_TYPE::CONSTANT, newTailDirection);
-	newTail->setDir(currentTail->currentDirection);
+
 	newTail->currentDirection = Direction::NONE;
 	newTail->lastDirection = Direction::NONE;
 	newTail->nextDirection = currentTail->lastDirection;
+	
 	cout << "old tail: ";
 	snakeBody.back()->printRect();
 	
@@ -510,12 +479,14 @@ bool Snake::gameOver() {
 	gameObjects.clear();
 	gameObjects.push_back(retryScreen);
 	tailSize = 0;
-	bool quitting = false;
 	loadGameObjects();
-	while (true) {
-		if (SDL_PollEvent(&e) > 0) {
+	while (true) 
+	{
+		if (SDL_PollEvent(&e) > 0) 
+		{
 			cout << "end event\n";
-			if (e.type == SDL_KEYDOWN) {
+			if (e.type == SDL_KEYDOWN) 
+			{
 				switch (e.key.keysym.sym)
 				{
 				case SDLK_q:
@@ -527,7 +498,12 @@ bool Snake::gameOver() {
 					cout << "restarting\n";
 					return false;
 				}
-				gameWindow->eventHandler();
+				//gameWindow->eventHandler();
+			}
+			else if (e.type == SDL_QUIT)
+			{
+				cout << "quitting" << endl;
+				return true;
 			}
 		}	
 	}

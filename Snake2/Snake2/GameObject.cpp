@@ -5,13 +5,12 @@
 GameObject::GameObject()
 {
 	objectRect = SDL_Rect{ 0, 0, 0, 0 };
-	objectDir = Direction::NONE;
 	objectMVMT = MOVEMENT_TYPE::STATIC;
 	textureFile = nullptr;
 	objectSurface = nullptr;
 }
 
-GameObject::GameObject(SDL_Rect rect, const char* file, MOVEMENT_TYPE mt, Direction dir) {
+GameObject::GameObject(SDL_Rect rect, const char* file, MOVEMENT_TYPE mt) {
 	cout << "GameObject::GameObject(): " << file << endl;
 	if (file == nullptr) 
 		cout << "	No file\n";
@@ -23,7 +22,7 @@ GameObject::GameObject(SDL_Rect rect, const char* file, MOVEMENT_TYPE mt, Direct
 
 	objectMVMT = mt;
 	textureFile = file;
-	objectDir = dir;
+
 	objectSurface = SDL_LoadBMP(textureFile);
 	
 	cout << "	Object created\n";
@@ -37,7 +36,6 @@ GameObject GameObject::operator=(GameObject other) {
 		objectRect = other.objectRect;
 		objectMVMT = other.objectMVMT;
 		textureFile = other.textureFile;
-		objectDir = other.objectDir;
 		objectSurface = other.objectSurface;
 	}
 
