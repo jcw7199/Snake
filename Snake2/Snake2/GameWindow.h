@@ -14,10 +14,7 @@ class GameWindow
 	//Game::Direction currentDirection;
 public:
 	SDL_Window* window;
-	SDL_Renderer* windowRen;
 	SDL_Surface* windowSurface;
-	SDL_Surface* backgroundSurface;
-	SDL_Texture* windowTexture;
 	SDL_Rect windowRect;
 
 	const char* gameTitle;
@@ -28,8 +25,6 @@ public:
 	bool init();
 	void loadObject(GameObject* object, SDL_Rect* imageCropAndPosition = nullptr);
 	bool eventHandler();
-	void addToRenderer(const char* file, SDL_Rect rect);
-	void present();
 	void deleteWindow();
 	~GameWindow();
 

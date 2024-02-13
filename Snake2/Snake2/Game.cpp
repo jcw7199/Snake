@@ -2,32 +2,17 @@
 
 using namespace std;
 
-Game::Game(){
+// default constructor
+Game::Game() {
 	cout << "Game::Game()\n";
 	//cout << player.getRect().x << endl;
-	isRunning = false;
-	gameTitle = nullptr;	
+	gamePlayer = nullptr;
+	gameTitle = nullptr;
+	gameWindow = nullptr;
 	cout << "	Game created\n";
 }
 
-void Game::start() {
-	cout << "Game::Start\n";
-	cout << gamePlayer->getTextureFile() << endl;
-	cout << gameObjects.size() << endl;
-
-}
-
-void Game::quit(){
-	cout << "Game::quit()\n";
-	isRunning = false;
-	//gamePlayer->destroyObject();
-	delete gameWindow;
-	gameWindow = nullptr;
-	gameTitle = nullptr;
-
-	gameObjects.clear();
-}
-
+// loads game objects by passing each one to the game window. 
 void Game::loadGameObjects()
 {
 	for (GameObject *obj : gameObjects)
@@ -36,7 +21,15 @@ void Game::loadGameObjects()
 	}	
 }
 
+// Game destructor
+Game::~Game() 
+{
+	delete gameWindow;
+	delete gamePlayer;
 
-Game::~Game() {
-	this->quit();
+	gameObjects.clear();
+
+	gameWindow = nullptr;
+	gameTitle = nullptr;
+	gamePlayer = nullptr;
 }

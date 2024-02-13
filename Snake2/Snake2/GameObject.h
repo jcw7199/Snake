@@ -13,25 +13,27 @@ private:
 	const char* textureFile;
 	SDL_Rect objectRect;
 	MOVEMENT_TYPE objectMVMT;
+	SDL_Surface* objectSurface;
+
 	
 public:
-	SDL_Surface* objectSurface;
 	GameObject();
 	GameObject(SDL_Rect rect, const char* file,
 			   MOVEMENT_TYPE mt = MOVEMENT_TYPE::STATIC);
 
 	GameObject operator=(GameObject other);
-
-	void moveObject(SDL_Rect rect) { objectRect = rect; }
 	
-	const char* getTextureFile() { return textureFile; }
 	MOVEMENT_TYPE getMVMT() { return objectMVMT; }
-	SDL_Rect* getRect();
-	
-	void printRect();
+	SDL_Rect* getRect() { return &objectRect; }
+	SDL_Surface* getSurface() { return objectSurface; }
+	const char* getTextureFile() { return textureFile; }
+
+	void setSurface(SDL_Surface* surface);
 	void setTexture(const char* textureFile);
 	void setRect(SDL_Rect rect);
-	void setMVMT(MOVEMENT_TYPE mt) { objectMVMT = mt; }
+	void setMVMT(MOVEMENT_TYPE mt) { objectMVMT = mt; }	
+	
+	void printRect();
 	void destroyObject();
 	~GameObject();
 };

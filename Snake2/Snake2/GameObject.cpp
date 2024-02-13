@@ -47,10 +47,9 @@ void GameObject::setTexture(const char* file){
 	textureFile = file;
 }
 
-void GameObject::printRect()
+void GameObject::setSurface(SDL_Surface* surface)
 {
-	cout << "Rect: x = " << objectRect.x << ", y = " << objectRect.y
-		<< ", w = " << objectRect.w << ", h = " << objectRect.h << endl;
+	objectSurface = surface;
 }
 
 void GameObject::setRect(SDL_Rect rect) {
@@ -58,14 +57,19 @@ void GameObject::setRect(SDL_Rect rect) {
 	objectRect = rect;
 }
 
-SDL_Rect* GameObject::getRect() {
-	//cout << textureFile << " getRect()\n";	
-	return &objectRect;
+void GameObject::printRect()
+{
+	cout << "Rect: x = " << objectRect.x << ", y = " << objectRect.y
+		<< ", w = " << objectRect.w << ", h = " << objectRect.h << endl;
 }
 
 void GameObject::destroyObject() {
-	//cout << " GameObject::destroyObject()\n";
+	cout << " GameObject::destroyObject() -- " << textureFile << endl;
 	SDL_FreeSurface(objectSurface);
+	textureFile = nullptr;
+	objectRect = SDL_Rect{ 0, 0, 0, 0 };
+
+
 }
 
 GameObject::~GameObject() {

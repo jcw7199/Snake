@@ -37,3 +37,10 @@ void SnakeBodyPart::printDirection()
 		break;
 	}
 }
+
+SnakeBodyPart::~SnakeBodyPart()
+{	
+	currentDirection = Direction::NONE;
+	lastDirection = Direction::NONE;
+	nextDirection = Direction::NONE;
+}
