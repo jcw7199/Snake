@@ -40,7 +40,7 @@ bool GameWindow::init() {
 	
 }
 
-void GameWindow::loadObject(GameObject* object, SDL_Rect* imageCropAndPosition)
+bool GameWindow::loadGameObject(GameObject* object, SDL_Rect* imageCropAndPosition)
 {
 	
 	//Load splash image
@@ -49,6 +49,7 @@ void GameWindow::loadObject(GameObject* object, SDL_Rect* imageCropAndPosition)
 	if (object->getSurface() == NULL)
 	{
 		printf("Unable to load image %s! SDL Error: %s\n", object->getTextureFile(), SDL_GetError());
+		return false;
 		
 	}
 	
@@ -58,6 +59,7 @@ void GameWindow::loadObject(GameObject* object, SDL_Rect* imageCropAndPosition)
 	if (SDL_BlitScaled(object->getSurface(), NULL, windowSurface, object->getRect()) < 0)
 	{
 		cout << "object: " << object->getTextureFile() << " -- blit error: " << SDL_GetError() << endl;
+		return false;
 	}
 	else
 	{
@@ -69,9 +71,32 @@ void GameWindow::loadObject(GameObject* object, SDL_Rect* imageCropAndPosition)
 	if (SDL_UpdateWindowSurface(window) < 0)
 	{
 		cout << "object: " << object->getTextureFile() << " -- update error: " << SDL_GetError() << endl;
+		return false;
 	}
 
 	//cout << "image loaded" << endl;
+}
+
+bool GameWindow::loadTextObject(TextObject* text)
+{
+	if (SDL_BlitSurface(text->getSurface(), NULL, windowSurface, text->getRect()) < 0)
+	{
+		cout << "text: " << text->getText() << " -- blit error: " << SDL_GetError() << endl;
+		return false;
+	}
+	else
+	{
+		//cout << "no blit error: " << object->getTextureFile() << ": x = " << object->getRect()->x
+			//<< ", y = " << object->getRect()->y << ", w = " << object->getRect()->w
+			//<< ", h = " << object->getRect()->h << endl;
+	}
+
+	if (SDL_UpdateWindowSurface(window) < 0)
+	{
+		cout << "object: " << text->getText() << " -- update error: " << SDL_GetError() << endl;
+		return false;
+	}
+
 }
 
 bool GameWindow::eventHandler() {

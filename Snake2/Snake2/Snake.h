@@ -10,6 +10,7 @@ class Snake: public Game{
 
 private:
 	
+	int score;
 	int appleFrame;
 	int tailSize;
 	int snakeVelocity = 20;
@@ -24,13 +25,16 @@ private:
 	SDL_Rect appleRect = { 0,0,snakeBodyDimensions * 2, snakeBodyDimensions * 2 };
 	SDL_Rect snakeRect = { center_x, center_y, snakeBodyDimensions,snakeBodyDimensions };
 	SDL_Rect windowRect = { SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mapSurface->w, mapSurface->h }; 
+	SDL_Rect scoreRect = { 5, 0, 10, 100 };
 
 	list<SnakeBodyPart*> snakeBody;
 	SnakeBodyPart* snakeHead;
 	GameObject* apple;
 	GameObject * map;
 	GameObject* retryScreen;
+	TextObject* scoreBoard;
 	
+	void updateScore();
 	void addTail();
 	void moveHead();
 	void moveBody();

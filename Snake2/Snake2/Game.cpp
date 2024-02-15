@@ -13,12 +13,19 @@ Game::Game() {
 }
 
 // loads game objects by passing each one to the game window. 
-void Game::loadGameObjects()
+void Game::loadObjects()
 {
 	for (GameObject *obj : gameObjects)
 	{		
-		gameWindow->loadObject(obj);
+		gameWindow->loadGameObject(obj);
 	}	
+
+	for (TextObject* obj : textObjects)
+	{
+		//SDL_TriggerBreakpoint();
+		gameWindow->loadTextObject(obj);
+	}
+	
 }
 
 // Game destructor

@@ -10,11 +10,16 @@ Snake::Snake()
 	// initialize member variables
 	gamePlayer = snakeHead;
 	gameTitle = "Snake Game";
+	
 	snakeHead = new SnakeBodyPart(snakeRect, "images/head.bmp", MOVEMENT_TYPE::CONSTANT, Direction::NONE);
 	apple = new GameObject(appleRect, "images/apple/1.bmp", MOVEMENT_TYPE::STATIC);;
 	map = new GameObject(mapRect, "images/map.bmp", MOVEMENT_TYPE::STATIC);
 	retryScreen = new GameObject(mapRect, "images/game_over.bmp");
 	gameWindow = new GameWindow(gameTitle, windowRect);
+	
+	scoreBoard = new TextObject(scoreRect, "fonts/ka1.ttf", "Score: 0", { 0, 0, 0 });
+
+	score = 0;
 	tailSize = 1;
 	appleFrame = 1;
 }
@@ -30,13 +35,14 @@ void Snake::start() {
 	gameObjects.push_back(map);
 	gameObjects.push_back(apple);
 	gameObjects.push_back(snakeHead);
+	textObjects.push_back(scoreBoard);
 	snakeBody.push_back(snakeHead);
 	
 	// spawn apple
 	respawnApple();
 
 	// load objects
-	loadGameObjects();
+	loadObjects();
 
 	//if not quitting
 	if (gameEvents() == false)
@@ -47,7 +53,9 @@ void Snake::start() {
 		delete map;
 		delete retryScreen;
 		delete gameWindow;
+		delete scoreBoard;
 		gameObjects.clear();
+		textObjects.clear();
 		Snake newSnake = Snake();
 		newSnake.start();
 	}
@@ -76,7 +84,7 @@ bool Snake::gameEvents() {
 	{
 		int startTick = SDL_GetTicks();
 
-		loadGameObjects();
+		loadObjects();
 
 		if (SDL_PollEvent(&e) > 0) {
 
@@ -139,6 +147,7 @@ bool Snake::gameEvents() {
 			cout << "apple collision detected." << endl;
 			snakeBody.front()->printRect();
 			addTail();
+			updateScore();
 			respawnApple();
 		}
 
@@ -334,6 +343,13 @@ void Snake::respawnApple() {
 	apple->getRect()->y = y;
 }
 
+void Snake::updateScore()
+{
+	score++;
+
+	scoreBoard->setText("Score: " + to_string(score));	
+}
+
 // Adds a tail to the snake using the body dimensions as an offset.
 void Snake::addTail() {
 	cout << tailSize << " Snake::addTail()\n";
@@ -505,7 +521,7 @@ bool Snake::gameOver() {
 	
 	//load retry screen
 	gameObjects.push_back(retryScreen);
-	loadGameObjects();
+	loadObjects();
 
 	cout << "\n\n----------------------------------------\n\n";
 	

@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "GameObject.h"
+#include "TextObject.h"
 //#include "Game.h"
 
 //enum Direction { NONE, UP, DOWN, LEFT, RIGHT };
@@ -23,7 +24,9 @@ public:
 
 	
 	bool init();
-	void loadObject(GameObject* object, SDL_Rect* imageCropAndPosition = nullptr);
+	bool loadGameObject(GameObject* object, SDL_Rect* imageCropAndPosition = nullptr);
+	bool loadTextObject(TextObject* text);
+	
 	bool eventHandler();
 	void deleteWindow();
 	~GameWindow();
