@@ -2,6 +2,8 @@
 
 SnakeBodyPart::SnakeBodyPart(SDL_Rect bodyPosition, const char* bodyImage, MOVEMENT_TYPE mvmnt, Direction current) : GameObject(bodyPosition, bodyImage, mvmnt)
 {
+	cout << "SnakeBodyPart::SnakeBodyPart()\n";
+
 	currentDirection = current;
 	lastDirection = Direction::NONE;
 	nextDirection = Direction::NONE;
@@ -9,6 +11,8 @@ SnakeBodyPart::SnakeBodyPart(SDL_Rect bodyPosition, const char* bodyImage, MOVEM
 
 void SnakeBodyPart::printDirection()
 {
+	cout << "SnakeBodyPart::printDirection()\n";
+
 	switch (currentDirection)
 	{
 	case Direction::UP:
@@ -40,6 +44,8 @@ void SnakeBodyPart::printDirection()
 
 SnakeBodyPart::~SnakeBodyPart()
 {	
+	cout << "SnakeBodyPart::~SnakeBodyPart()\n";
+
 	currentDirection = Direction::NONE;
 	lastDirection = Direction::NONE;
 	nextDirection = Direction::NONE;

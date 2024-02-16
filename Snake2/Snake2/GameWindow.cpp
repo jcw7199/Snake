@@ -2,7 +2,7 @@
 #include <iostream>
 
 GameWindow::GameWindow(const char* title, SDL_Rect rect) {
-	cout << "GameWindow::GameWindow\n";
+	cout << "GameWindow::GameWindow()\n";
 	windowRect = rect;
 	gameTitle = title;
 	window = nullptr;
@@ -42,6 +42,8 @@ bool GameWindow::init() {
 
 bool GameWindow::loadGameObject(GameObject* object, SDL_Rect* imageCropAndPosition)
 {
+	cout << "GameWindow::loadGameObject()\n";
+
 	
 	//Load splash image
 	object->setSurface(SDL_LoadBMP(object->getTextureFile()));
@@ -79,6 +81,8 @@ bool GameWindow::loadGameObject(GameObject* object, SDL_Rect* imageCropAndPositi
 
 bool GameWindow::loadTextObject(TextObject* text)
 {
+	cout << "GameWindow::loadTextObject()\n";
+
 	if (SDL_BlitSurface(text->getSurface(), NULL, windowSurface, text->getRect()) < 0)
 	{
 		cout << "text: " << text->getText() << " -- blit error: " << SDL_GetError() << endl;
@@ -101,6 +105,8 @@ bool GameWindow::loadTextObject(TextObject* text)
 
 bool GameWindow::eventHandler() {
 	//cout << "polling started" << endl;
+	cout << "GameWindow::eventHandler()\n";
+
 	SDL_Event e;
 	bool quitting = false;
 
@@ -119,6 +125,8 @@ bool GameWindow::eventHandler() {
 }
 
 GameWindow& GameWindow::operator=(const GameWindow& other) {
+	cout << "GameWindow::op=()\n";
+
 	if(this->window != other.window){
 		SDL_DestroyWindow(this->window);
 		this->window = nullptr;
@@ -131,16 +139,14 @@ GameWindow& GameWindow::operator=(const GameWindow& other) {
 }
 
 void GameWindow::deleteWindow() {
-	SDL_DestroyWindow(window);
+	cout << "GameWindow::deleteWindow()\n";
 	SDL_FreeSurface(windowSurface);
-
-	windowSurface = nullptr;
-	gameTitle = nullptr;
-	window = nullptr;
-	windowRect = SDL_Rect{ 0, 0, 0, 0 };
+	SDL_DestroyWindow(window);
 	SDL_Quit();
 }
 
 GameWindow::~GameWindow() {
+	cout << "GameWindow::~GameWindow()\n";
+
 	this->deleteWindow();
 }

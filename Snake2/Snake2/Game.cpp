@@ -15,6 +15,8 @@ Game::Game() {
 // loads game objects by passing each one to the game window. 
 void Game::loadObjects()
 {
+	cout << "Game::loadObjects()\n";
+
 	for (GameObject *obj : gameObjects)
 	{		
 		gameWindow->loadGameObject(obj);
@@ -31,6 +33,7 @@ void Game::loadObjects()
 // Game destructor
 Game::~Game() 
 {
+	cout << "Game::~Game()\n";
 	delete gameWindow;
 	delete gamePlayer;
 

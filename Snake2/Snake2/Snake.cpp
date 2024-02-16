@@ -198,7 +198,6 @@ bool Snake::gameEvents() {
 			}
 			else
 			{
-				//SDL_TriggerBreakpoint();
 				return quitting;
 			}
 		}
@@ -234,6 +233,8 @@ bool Snake::backwardsCheck() {
 // moves snake head
 void Snake::moveHead()
 {
+	cout << "Snake::moveHead()\n";
+
 	//cout << "move head" << endl;
 
 	//store current direction
@@ -278,6 +279,8 @@ void Snake::moveHead()
 // moves snake body
 void Snake::moveBody()
 {
+	cout << "Snake::moveBody()\n";
+
 	
 	list<SnakeBodyPart*>::reverse_iterator rev_it;
 	list<SnakeBodyPart*>::reverse_iterator prevIt;
@@ -329,6 +332,10 @@ void Snake::moveBody()
 
 // spawns an apple within the bounds of the game.
 void Snake::respawnApple() {
+	
+	cout << "Snake::respawnApple()\n";
+
+	
 	int x = 0, y = 0;
 	
 	while (x == 0 || y == 0)
@@ -345,6 +352,8 @@ void Snake::respawnApple() {
 
 void Snake::updateScore()
 {
+	cout << "Snake::updateScore()\n";
+
 	score++;
 
 	scoreBoard->setText("Score: " + to_string(score));	
@@ -439,6 +448,8 @@ void Snake::addTail() {
 // Detects collision between snake head and apples.
 bool Snake::appleCollision()
 {
+	cout << "Snake::appleCollision()\n";
+
 	SDL_Rect* collision = nullptr;
 	if (SDL_HasIntersection(snakeBody.front()->getRect(), apple->getRect()) == SDL_TRUE)
 	{
@@ -452,6 +463,8 @@ bool Snake::appleCollision()
 
 // Detects collisions with border.
 bool Snake::borderCollision() {
+
+	cout << "Snake::borderCollision()\n";
 
 	//left border
 	if (snakeBody.front()->getRect()->x <= 0)
@@ -486,6 +499,7 @@ bool Snake::borderCollision() {
 // Detects collisons with the head and its own body.
 bool Snake::bodyCollision()
 {
+	cout << "Snake::bodyCollision()\n";
 
 	list<SnakeBodyPart*>::reverse_iterator rev_it;
 	list<SnakeBodyPart*>::reverse_iterator prevIt;
@@ -561,7 +575,7 @@ bool Snake::gameOver() {
 
 // Clears all game objects
 void Snake::quit() {
-	cout << "Snake::quit\n";
+	cout << "Snake::quit()\n";
 	
 	delete snakeHead;
 	delete apple;

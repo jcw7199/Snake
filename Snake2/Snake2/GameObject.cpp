@@ -4,6 +4,7 @@
 
 GameObject::GameObject()
 {
+	cout << "GameObject::GameObject()\n";
 	objectRect = SDL_Rect{ 0, 0, 0, 0 };
 	objectMVMT = MOVEMENT_TYPE::STATIC;
 	textureFile = nullptr;
@@ -44,21 +45,26 @@ GameObject GameObject::operator=(GameObject other) {
 
 
 void GameObject::setTexture(const char* file){
+	cout << "GameObject::setTexture()\n";
+
 	textureFile = file;
 }
 
 void GameObject::setSurface(SDL_Surface* surface)
 {
+	cout << "GameObject::setSurface()\n";
 	objectSurface = surface;
 }
 
 void GameObject::setRect(SDL_Rect rect) {
-	//cout << "GameObject::setRect()\n";
+	cout << "GameObject::setRect()\n";
 	objectRect = rect;
 }
 
 void GameObject::printRect()
 {
+	cout << "GameObject::printRect()\n";
+
 	cout << "Rect: x = " << objectRect.x << ", y = " << objectRect.y
 		<< ", w = " << objectRect.w << ", h = " << objectRect.h << endl;
 }
@@ -73,6 +79,8 @@ void GameObject::destroyObject() {
 }
 
 GameObject::~GameObject() {
+	cout << "GameObject::~GameObject()\n";
+
 	if (this != nullptr)
 		this->destroyObject();
 }
