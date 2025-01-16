@@ -1,0 +1,13 @@
+﻿  driver.cpp
+  Game.cpp
+  GameObject.cpp
+  GameWindow.cpp
+  Snake.cpp
+C:\Users\Mr. Nobody\Documents\Projects\Projects On Website\Snake2-main\Snake2-main\Snake2\Snake2\Snake.cpp(507,17): warning C4101: 'previous': unreferenced local variable
+  SnakeBodyPart.cpp
+  TextObject.cpp
+  Generating Code...
+C:\Users\Mr. Nobody\Documents\Projects\Projects On Website\Snake2-main\Snake2-main\Snake2\Snake2\GameWindow.cpp(41,1): warning C4715: 'GameWindow::init': not all control paths return a value
+C:\Users\Mr. Nobody\Documents\Projects\Projects On Website\Snake2-main\Snake2-main\Snake2\Snake2\GameWindow.cpp(104,1): warning C4715: 'GameWindow::loadTextObject': not all control paths return a value
+C:\Users\Mr. Nobody\Documents\Projects\Projects On Website\Snake2-main\Snake2-main\Snake2\Snake2\GameWindow.cpp(80,1): warning C4715: 'GameWindow::loadGameObject': not all control paths return a value
+  Snake2.vcxproj -> C:\Users\Mr. Nobody\Documents\Projects\Projects On Website\Snake2-main\Snake2-main\Snake2\x64\Debug\Snake2.exe
