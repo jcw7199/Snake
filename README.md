@@ -1,5 +1,5 @@
 # Snake2
-Re-do of my SDL Snake Game Project
+Replica of the classic Snake video using SDL and C++.
 
 To run this project, download the 'Run Snake Game'.zip file.
 Unzip the folder, and double click on Snake2.exe shortcut.
