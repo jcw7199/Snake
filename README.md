@@ -1,4 +1,4 @@
-# Snake2
+# Snake
 Replica of the classic Snake video using SDL and C++.
 
 To run this project, download the 'Run Snake Game'.zip file.
